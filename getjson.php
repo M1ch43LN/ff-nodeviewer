@@ -1,5 +1,7 @@
 <?php
 
+//Simples Proxy-Skript zum Laden von json-Dateien
+
 header('Content-Type: application/json');
 
 $url=urldecode($_GET["url"]);
