@@ -1,7 +1,7 @@
-@import url(//fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,300,600,700,900);
+@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,300,600,700,900);
 
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Source Sans Pro', sans-serif;
     font-size: 10pt;
     font-weight: normal;
 }
@@ -93,18 +93,14 @@ h1 {
 	margin-top: 3px;
 }
 
-#nodes tbody td a:link, 
-#nodes tbody td a:active, 
-#nodes tbody td a:visited, 
-#nodes tbody td a:hover {
-	text-decoration: none;
-	font-weight: bold;
-	color: #000;
-}
-
 #nodes td .onoff,
 #nodes tbody td .nodemenu img {
     height: 16px;
+}
+
+#nodes tbody .offline td {
+	color: #404040;
+	font-weight: lighter;
 }
 
 /* tables */

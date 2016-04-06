@@ -149,7 +149,7 @@ function showNodes(nodes) {
             var strStatLink = gStatsURL.replace("{NODE_ID}", id);
             
             //Zeile zusammenbauen...
-            var strTR = "<tr>";
+            var strTR = "<tr" + (nodedata.flags.online === false ? " class='offline'" : "") + ">";
             strTR = strTR + "<td>" + "<img src='" + strImg + "' class='onoff' />" + "</td>";
             strTR = strTR + "<td class='hostname'>";
             strTR = strTR + nodedata.nodeinfo.hostname;
