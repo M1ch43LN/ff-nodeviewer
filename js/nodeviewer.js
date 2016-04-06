@@ -68,6 +68,8 @@ function showNodes(nodes) {
     
     clearNodesTable();
     
+    $(".loader").show();
+    
     $.each(nodes.nodes, function(id, nodedata) {
         var bolShow = true;
         var strImg;
@@ -102,6 +104,7 @@ function showNodes(nodes) {
         }
         
         if (bolShow) {
+            //Online-Status
             if (nodedata.flags.online == true) {
                 strImg = "img/on.png";
             } else {
@@ -145,6 +148,7 @@ function showNodes(nodes) {
             var strMeshLink = gMeshviewer + "#!v:m;n:" + id;
             var strStatLink = gStatsURL.replace("{NODE_ID}", id);
             
+            //Zeile zusammenbauen...
             var strTR = "<tr>";
             strTR = strTR + "<td>" + "<img src='" + strImg + "' class='onoff' />" + "</td>";
             strTR = strTR + "<td class='hostname'>";
@@ -162,6 +166,7 @@ function showNodes(nodes) {
             strTR = strTR + "<td>" + strClients + "</td>";
             strTR = strTR + "</tr>";
             
+            //...und der Tabelle hinzufügen.
             tabNodes.append(strTR);
         }
         
@@ -187,6 +192,8 @@ function showNodes(nodes) {
             4: {sorter: false}
         } 
     }); 
+    
+    $(".loader").hide();
 }
 
 function getParameters () {

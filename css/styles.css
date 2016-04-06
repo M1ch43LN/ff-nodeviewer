@@ -18,6 +18,18 @@ h1 {
 	left: 10px;
 	top: 10px;
 	height: 80px;
+	font-size: 22pt;
+}
+
+.loader {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin-top: -24px;
+	margin-left: -24px;
+	width: 48px;
+	height: 48px;
+	z-index: 9999;
 }
 
 #nodes {
@@ -42,6 +54,12 @@ h1 {
 #nodes tbody tr td:nth-child(1),
 #nodes thead tr th:nth-child(1) { 
 	text-align: center;
+	border-right: none;
+}
+
+#nodes tbody tr td:nth-child(2),
+#nodes thead tr th:nth-child(2) { 
+	border-left: none;
 }
 
 #nodes tbody tr td:nth-last-child(1),
@@ -67,7 +85,7 @@ h1 {
 }
 
 #nodes tbody tr .active {
-	font-size: 8pt;
+	font-size: 7pt;
 }
 
 #nodes tbody td .nodemenu {
