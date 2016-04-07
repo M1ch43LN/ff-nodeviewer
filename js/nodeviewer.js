@@ -2,7 +2,14 @@
 /* global gMeshviewer */
 /* global gLogo */
 
+var gNodes;
 var gStatsURL = "";
+var intOnline = 0;
+var intOffline = 0;
+var intClients = 0;
+var intFilter = 0;
+var intTotal = 0;
+var intClientsTotal = 0;
 
 $(document).ready(function(){
     loadConfig();
@@ -12,7 +19,6 @@ function loadConfig() {
     if (typeof gLogo !== 'undefined') {
         $("body").append("<img src='" + gLogo + "' class='logo'/>");
     }
-    
     
     var url = "getjson.php?url=" + encodeURI(gMeshviewer + "config.json");
     console.log("Config: " + url);
@@ -37,13 +43,14 @@ function loadConfig() {
         var strNodesURL = "getjson.php?url=" + encodeURI(strDataPath + "nodes.json");
         console.log("Nodes: " + strNodesURL);
         $.getJSON(strNodesURL, function(nodes) {
+            gNodes = nodes;
             showNodes(nodes);
         });
     });
 }
 
 function clearNodesTable() {
-    $("table#nodes > tbody").find("tr").remove();
+    $("#nodes > tbody").empty();
 }
 
 function showNodes(nodes) {
@@ -53,6 +60,13 @@ function showNodes(nodes) {
     var strFilterKontakt = false;
     var strFilterOnline = -1;
     var strFilterHostname = false;
+    
+    intOnline = 0;
+    intOffline = 0;
+    intClients = 0;
+    intFilter = 0;
+    intTotal = 0;
+    intClientsTotal = 0;
     
     if (arrParms.hasOwnProperty("contact")) {
         strFilterKontakt = arrParms["contact"].toLowerCase();
@@ -77,6 +91,11 @@ function showNodes(nodes) {
         var strKontakt = "";
         var strUptime = "";
         var strClients = "";
+        
+        intTotal++;
+        if (nodedata.statistics.hasOwnProperty("clients")) {
+            intClientsTotal = intClientsTotal + parseInt(nodedata.statistics.clients);
+        }
         
         //Kontaktfilter
         if (strFilterKontakt) {
@@ -104,12 +123,7 @@ function showNodes(nodes) {
         }
         
         if (bolShow) {
-            //Online-Status
-            if (nodedata.flags.online == true) {
-                strImg = "img/on.png";
-            } else {
-                strImg = "img/off.png";
-            }
+            intFilter++;
             
             //Hardware
             if (nodedata.nodeinfo.hasOwnProperty("hardware")) {
@@ -142,6 +156,7 @@ function showNodes(nodes) {
             //Clients
             if (nodedata.statistics.hasOwnProperty("clients")) {
                 strClients = nodedata.statistics.clients;
+                intClients = intClients + parseInt(nodedata.statistics.clients);
             }
             
             //Link zum Node im Meshviewer
@@ -149,21 +164,51 @@ function showNodes(nodes) {
             var strStatLink = gStatsURL.replace("{NODE_ID}", id);
             
             //Zeile zusammenbauen...
-            var strTR = "<tr" + (nodedata.flags.online === false ? " class='offline'" : "") + ">";
-            strTR = strTR + "<td>" + "<img src='" + strImg + "' class='onoff' />" + "</td>";
+            var strTR = "<tr id='" + id + "' " + (nodedata.flags.online === false ? " class='offline'" : "") + ">";
+            strTR = strTR + "<td>";
+            if (nodedata.flags.online == true) {
+                strTR = strTR + "<img src='img/on.png' title='Router ist online' class='onoff' />";
+                intOnline++;
+            } else {
+                strTR = strTR + "<img src='img/off.png' title='Router ist offline' class='onoff' />";
+                intOffline++;
+            }
+            strTR = strTR + "</td>";
             strTR = strTR + "<td class='hostname'>";
             strTR = strTR + nodedata.nodeinfo.hostname;
-            strTR = strTR + "<div class='nodemenu'>";
-            strTR = strTR + "<a href='" + strMeshLink + "' target='_blank'><img src='img/map.png'/></a>";
-            if (strStatLink != "") {
-                strTR = strTR + "<a href='" + strStatLink + "' target='_blank'><img src='img/stats.png'/></a>";
+            strTR = strTR + "<table class='nodeinfo'><tbody><tr>";
+            strTR = strTR + "<td>";
+            if (nodedata.nodeinfo.network.hasOwnProperty("mesh")) {
+                if (nodedata.nodeinfo.network.mesh.hasOwnProperty("bat0")) {
+                    if (nodedata.nodeinfo.network.mesh.bat0.interfaces.hasOwnProperty("tunnel")) {
+                        strTR = strTR + "<img src='img/vpn.png' title='Mesh-VPN konfiguriert'/>";
+                    }
+                }
             }
-            strTR = strTR + "</div>";
             strTR = strTR + "</td>";
+            strTR = strTR + "<td>";
+            if (nodedata.nodeinfo.network.hasOwnProperty("mesh")) {
+                if (nodedata.nodeinfo.network.mesh.hasOwnProperty("bat0")) {
+                    if (nodedata.nodeinfo.network.mesh.bat0.interfaces.hasOwnProperty("wireless") || nodedata.nodeinfo.network.mesh.bat0.interfaces.hasOwnProperty("other")) {
+                        strTR = strTR + "<img src='img/mesh.png' title='Mesh-WLAN/LAN/WAN konfiguriert'/>";
+                    }
+                }
+            }
+            strTR = strTR + "</td>";
+            strTR = strTR + "<td>";
+            strTR = strTR + "<a href='" + strMeshLink + "' target='_blank'><img src='img/map.png' title='Router im Meshviewer anzeigen' /></a>";
+            strTR = strTR + "</td>";
+            strTR = strTR + "<td>";
+            if (strStatLink != "") {
+                strTR = strTR + "<a href='" + strStatLink + "' target='_blank'><img src='img/stats.png' 'Statistiken des Routers anzeigen' /></a>";
+            }
+            strTR = strTR + "</td>";
+            strTR = strTR + "</tr></tbody></table>";
+            strTR = strTR + "</td>";
+            strTR = strTR + "<td>" + strClients + "</td>";
+            strTR = strTR + "<td>" + strUptime + "</td>";
             strTR = strTR + "<td>" + strTechnik + "</td>";
             strTR = strTR + "<td>" + strKontakt + "</td>";
-            strTR = strTR + "<td>" + strUptime + "</td>";
-            strTR = strTR + "<td>" + strClients + "</td>";
             strTR = strTR + "</tr>";
             
             //...und der Tabelle hinzufügen.
@@ -172,27 +217,31 @@ function showNodes(nodes) {
         
     });  
     
-    //Menü ein-/ausblenden
-    $('td.hostname').hover(
-        function () {
-            $(this).addClass("active");
-            $(".nodemenu",this).show();
-        }, 
-        function () {
-            $(this).removeClass("active");
-            $(".nodemenu",this).hide();
-        }
-    );
+    $("#online").text(intOnline);
+    $("#offline").text(intOffline);
+    if (intClients < intClientsTotal) {
+        $("#clients").text(intClients + "/" + intClientsTotal);
+    } else {
+        $("#clients").text(intClients);
+    }
+    if (intFilter < intTotal) {
+        $("#filter").text(intFilter + "/" + intTotal);
+    } else {
+        $("#filter").text(intTotal);
+    }
+    
+    
+    $("#summary").show();
     
     //Tablesorter aktivieren
     $("#nodes").tablesorter({
         sortList: [[1,0]],
         headers: { 
             0: {sorter: false},
-            4: {sorter: false}
+            3: {sorter: false}
         } 
     }); 
-    
+
     $(".loader").hide();
 }
 
