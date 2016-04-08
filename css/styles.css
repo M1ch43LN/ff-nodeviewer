@@ -90,14 +90,14 @@ h1 {
 	font-size: 7pt;
 }
 
-#nodes tbody td .nodeinfo {
+#nodes tbody tr td .nodeinfo {
 	border: none;
 	border-spacing: 0;
 	border-collapse: collapse;
 	float: right;
 }
 
-#nodes tbody td .nodeinfo tbody td {
+#nodes tbody tr td .nodeinfo tbody td {
 	text-align: center;
 	vertical-align: middle;
 	border: none;
@@ -106,12 +106,16 @@ h1 {
 	width: 24px;
 }
 
-#nodes tbody td .nodeinfo tbody td img {
+#nodes tbody tr td .nodeinfo tbody td img {
 	opacity: 0.5;
 }
 
+#nodes tbody .offline td .nodeinfo tbody td img {
+	opacity: 0.25;
+}
+
 #nodes td .onoff,
-#nodes tbody .hostname img,
+#nodes tbody .td-hostname img,
 #summary img {
     height: 16px;
 }
