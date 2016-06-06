@@ -2,6 +2,7 @@
 /* global gMeshviewer */
 /* global gLogo */
 /* global gNeuLaden */
+/* global gNodedaten */
 
 var gNodes;
 var gStatsURL = "";
@@ -45,6 +46,11 @@ function loadConfig() {
         }
         
         var strNodesURL = "getjson.php?url=" + encodeURI(strDataPath + "nodes.json");
+        
+        if (typeof gNodedaten !== 'undefined') {
+            strNodesURL = "getjson.php?url=" + encodeURI(gNodedaten + "nodes.json");
+        }
+        
         console.log("Nodes: " + strNodesURL);
         $.getJSON(strNodesURL, function(nodes) {
             showNodes(nodes);
