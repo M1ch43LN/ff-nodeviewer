@@ -133,7 +133,7 @@ function showNodes(nodes) {
         
         if (bolShow) {
             intFilter++;
-            
+            console.log(id);
             initRow(id);
             populateRow(id, nodedata);
         }
@@ -190,6 +190,7 @@ function populateRow(id, nodedata) {
     var strKontakt = "";
     var strUptime = "";
     var strClients = "";
+    var strNodeID = "";
     
     //Hardware
     if (nodedata.nodeinfo.hasOwnProperty("hardware")) {
@@ -225,9 +226,14 @@ function populateRow(id, nodedata) {
         intClients = intClients + parseInt(nodedata.statistics.clients);
     }
     
+    //Node-ID
+    if (nodedata.nodeinfo.hasOwnProperty("node_id")) {
+        strNodeID = nodedata.nodeinfo.node_id;
+    } 
+    
     //Link zum Node im Meshviewer
-    var strMeshLink = gMeshviewer + "#!v:m;n:" + id;
-    var strStatLink = gStatsURL.replace("{NODE_ID}", id);
+    var strMeshLink = gMeshviewer + "#!v:m;n:" + strNodeID;
+    var strStatLink = gStatsURL.replace("{NODE_ID}", strNodeID);
     
     var row = $("#" + id);
     
