@@ -18,9 +18,14 @@ Abschließend muss noch die "config.js" im "js"-Verzeichnis editiert werden.
 Einstellungen werden über die Datei "js/config.js" vorgenommen.
 
     //URL des Meshviewers
-    var gMeshviewer = "http://mesh.ffnw.de/";
+    var gMeshviewer = "http://map.ffnw.de/";
+    //URL der Nodedaten. Wenn nicht angegeben, wird die URL aus der Config genommen
+    var gNodedaten = "http://map.ffnw.de/data/default/";
     //URL zur Logodatei
     var gLogo = "http://meinserver.de/logo.png";
+    //Daten alle x Sekunden neu laden. Werte unter 60 werden ignoriert.
+    var gNeuLaden = 300;
+    
 
 ## Filter ##
 
