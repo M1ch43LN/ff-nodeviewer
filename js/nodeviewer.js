@@ -234,6 +234,7 @@ function populateRow(id, nodedata) {
     //Link zum Node im Meshviewer
     var strMeshLink = gMeshviewer + "#!v:m;n:" + strNodeID;
     var strStatLink = gStatsURL.replace("{NODE_ID}", strNodeID);
+    var strStatLink = gStatsURL.replace("{NODE_NAME}", nodedata.nodeinfo.hostname);
     
     var row = $("#" + id);
     
