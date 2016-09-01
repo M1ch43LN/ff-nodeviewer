@@ -133,9 +133,9 @@ function showNodes(nodes) {
         
         if (bolShow) {
             intFilter++;
-            console.log(id);
-            initRow(id);
-            populateRow(id, nodedata);
+            console.log("ID:[" + nodedata.nodeinfo.node_id + "]");
+            initRow(nodedata.nodeinfo.node_id);
+            populateRow(nodedata.nodeinfo.node_id, nodedata);
         }
         
     });  
