@@ -1,11 +1,12 @@
 /* global $ */
-/* global gMeshviewer */
+/* global gTitle */
+/* global gMapLink */
+/* global gStatsLink */
 /* global gLogo */
 /* global gNeuLaden */
 /* global gNodedaten */
 
 var gNodes;
-var gStatsURL = "";
 var intOnline = 0;
 var intOffline = 0;
 var intClients = 0;
@@ -25,48 +26,30 @@ function loadConfig() {
         $("body").append("<img src='" + gLogo + "' class='logo'/>");
     }
     
-    var url = "getjson.php?url=" + encodeURI(gMeshviewer + "config.json");
+    $("title").text("Nodeviewer");
+    $("h1").text(gTitle);
+    
+    var url = "getjson.php?url=" + encodeURI(gNodedaten);
     console.log("Config: " + url);
-    $.getJSON(url, function(meshconfig) {
-        $("title").text("Nodeviewer - " + meshconfig.siteName);
-        $("h1").text(meshconfig.siteName);
-        
-        var strDataPath;
-        if( typeof meshconfig.dataPath === 'string' ) {
-            strDataPath = meshconfig.dataPath;
-        } else {
-            strDataPath = meshconfig.dataPath[0];
+    loadNodes(url);
+}
+
+function loadNodes(strNodesURL) {
+    console.log("Nodes: " + strNodesURL);
+    $.getJSON(strNodesURL, function(nodes) {
+        showNodes(nodes);
+        if (typeof gNodes === "undefined") {
+            gNodes = nodes;
+            //Tablesorter aktivieren
+            $("#nodes").tablesorter({
+                sortList: [[1,0]],
+                headers: { 
+                    0: {sorter: false},
+                    3: {sorter: false}
+                } 
+            }); 
         }
-        if (strDataPath.indexOf("//") === -1) {
-            strDataPath = gMeshviewer + "/" + strDataPath;
-        }
-        
-        if (meshconfig.hasOwnProperty("nodeInfos")) {
-            gStatsURL = meshconfig.nodeInfos[0].href;
-        }
-        
-        var strNodesURL = "getjson.php?url=" + encodeURI(strDataPath + "nodes.json");
-        
-        if (typeof gNodedaten !== 'undefined') {
-            strNodesURL = "getjson.php?url=" + encodeURI(gNodedaten + "nodes.json");
-        }
-        
-        console.log("Nodes: " + strNodesURL);
-        $.getJSON(strNodesURL, function(nodes) {
-            showNodes(nodes);
-            if (typeof gNodes === "undefined") {
-                gNodes = nodes;
-                //Tablesorter aktivieren
-                $("#nodes").tablesorter({
-                    sortList: [[1,0]],
-                    headers: { 
-                        0: {sorter: false},
-                        3: {sorter: false}
-                    } 
-                }); 
-            }
-            setTimeout(loadConfig, gNeuLaden * 1000);
-        });
+        setTimeout(loadConfig, gNeuLaden * 1000);
     });
 }
 
@@ -102,14 +85,14 @@ function showNodes(nodes) {
         var bolShow = true;
         
         intTotal++;
-        if (nodedata.statistics.hasOwnProperty("clients")) {
-            intClientsTotal = intClientsTotal + parseInt(nodedata.statistics.clients,10);
+        if (nodedata.hasOwnProperty("clients")) {
+            intClientsTotal = intClientsTotal + parseInt(nodedata.clients,10);
         }
         
         //Kontaktfilter
         if (strFilterKontakt) {
-            if (nodedata.nodeinfo.hasOwnProperty("owner")) {
-                if (strFilterKontakt != nodedata.nodeinfo.owner.contact.toLowerCase()) {
+            if (nodedata.hasOwnProperty("owner")) {
+                if (strFilterKontakt != nodedata.owner.toLowerCase()) {
                     bolShow = false;
                 }
             } else {
@@ -119,23 +102,23 @@ function showNodes(nodes) {
         
         //Online-Filter
         if (strFilterOnline > -1) {
-            if (nodedata.flags.online != strFilterOnline) {
+            if (nodedata.is_online != strFilterOnline) {
                 bolShow = false;
             }
         }
         
         //Hostname-Filter
         if (strFilterHostname) {
-            if (nodedata.nodeinfo.hostname.toLowerCase().indexOf(strFilterHostname.toLowerCase()) === -1) {
+            if (nodedata.hostname.toLowerCase().indexOf(strFilterHostname.toLowerCase()) === -1) {
                 bolShow = false;
             }
         }
         
         if (bolShow) {
             intFilter++;
-            console.log("ID:[" + nodedata.nodeinfo.node_id + "]");
-            initRow(nodedata.nodeinfo.node_id);
-            populateRow(nodedata.nodeinfo.node_id, nodedata);
+            console.log("ID:[" + nodedata.node_id + "]");
+            initRow(nodedata.node_id);
+            populateRow(nodedata.node_id, nodedata);
         }
         
     });  
@@ -159,9 +142,7 @@ function showNodes(nodes) {
     
     var datTimestamp = new Date(nodes.timestamp);
     $("#clock").text(datTimestamp.toLocaleDateString() + " " + datTimestamp.toLocaleTimeString());
-    
     $("#summary").show();
-    
     $(".loader").hide();
 }
 
@@ -174,7 +155,8 @@ function initRow(id) {
         row = row + "<td class='td-hostname'></td>";
         row = row + "<td class='td-clients'></td>";
         row = row + "<td class='td-uptime'></td>";
-        row = row + "<td class='td-technik'></td>";
+        row = row + "<td class='td-router'></td>";
+        row = row + "<td class='td-firmware'></td>";
         row = row + "<td class='td-kontakt'></td>";
         row = row + "</tr>";
         $("#nodes tbody:first").append(row);
@@ -186,62 +168,55 @@ function initRow(id) {
 
 function populateRow(id, nodedata) {
     var strImg;
-    var strTechnik = "";
+    var strRouter = "";
+    var strFirmware = "";
     var strKontakt = "";
     var strUptime = "";
     var strClients = "";
     var strNodeID = "";
     
     //Hardware
-    if (nodedata.nodeinfo.hasOwnProperty("hardware")) {
-        if (nodedata.nodeinfo.hardware.hasOwnProperty("model")) {
-            strTechnik = nodedata.nodeinfo.hardware.model;
-        }
-        if (nodedata.nodeinfo.hasOwnProperty("software")) {
-            if (strTechnik != "") strTechnik = strTechnik + "<br/>";
-            if (nodedata.nodeinfo.software.hasOwnProperty("firmware")) {
-                if (nodedata.nodeinfo.software.firmware.hasOwnProperty("base")) {
-                    strTechnik = strTechnik + nodedata.nodeinfo.software.firmware.base + " / ";
-                }
-                if (nodedata.nodeinfo.software.firmware.hasOwnProperty("release")) {
-                    strTechnik = strTechnik + nodedata.nodeinfo.software.firmware.release;
-                }
+    if (nodedata.hasOwnProperty("model")) {
+        strRouter = nodedata.model;
+        if (nodedata.hasOwnProperty("firmware")) {
+            if (nodedata.firmware.hasOwnProperty("release")) {
+                strFirmware = nodedata.firmware.release;
             }
         }
     }
     
     //Kontakt
-    if (nodedata.nodeinfo.hasOwnProperty("owner")) {
-        strKontakt = nodedata.nodeinfo.owner.contact;
+    if (nodedata.hasOwnProperty("owner")) {
+        strKontakt = nodedata.owner;
     } 
     
     //Uptime
-    if (nodedata.statistics.hasOwnProperty("uptime")) {
-        strUptime = formatUptime(nodedata.statistics.uptime);
+    if (nodedata.hasOwnProperty("uptime")) {
+        strUptime = formatUptime(nodedata.uptime);
     }
     
     //Clients
-    if (nodedata.statistics.hasOwnProperty("clients")) {
-        strClients = nodedata.statistics.clients;
-        intClients = intClients + parseInt(nodedata.statistics.clients);
+    if (nodedata.hasOwnProperty("clients")) {
+        strClients = nodedata.clients;
+        intClients = intClients + parseInt(nodedata.clients);
     }
     
     //Node-ID
-    if (nodedata.nodeinfo.hasOwnProperty("node_id")) {
-        strNodeID = nodedata.nodeinfo.node_id;
+    if (nodedata.hasOwnProperty("node_id")) {
+        strNodeID = nodedata.node_id;
     } 
     
     //Link zum Node im Meshviewer
-    var strMeshLink = gMeshviewer + "#!v:m;n:" + strNodeID;
-    var strStatLink = gStatsURL.replace("{NODE_ID}", strNodeID);
-    var strStatLink = gStatsURL.replace("{NODE_NAME}", nodedata.nodeinfo.hostname);
+    var strMeshLink = gMapLink.replace("{NODE_ID}", strNodeID);
+    var strStatLink = gStatsLink.replace("{NODE_ID}", strNodeID);
+    strStatLink = strStatLink.replace("{NODE_NAME}", nodedata.hostname);
     
     var row = $("#" + id);
     
     $("td",row).empty();
     
     //Online/Offline
-    if (nodedata.flags.online == true) {
+    if (nodedata.is_online == true) {
         $(".td-status", row).append("<img src='img/on.png' title='Router ist online' class='onoff' />");
         row.removeClass("offline");
         intOnline++;
@@ -252,28 +227,10 @@ function populateRow(id, nodedata) {
     }
     
     //Hostname
-    $(".td-hostname", row).append(nodedata.nodeinfo.hostname);
+    $(".td-hostname", row).append(nodedata.hostname);
     
     //Hostinfos und Menü
     var tabInfo = "<table class='nodeinfo'><tbody><tr>";
-    tabInfo = tabInfo + "<td>";
-    if (nodedata.nodeinfo.network.hasOwnProperty("mesh")) {
-        if (nodedata.nodeinfo.network.mesh.hasOwnProperty("bat0")) {
-            if (nodedata.nodeinfo.network.mesh.bat0.interfaces.hasOwnProperty("tunnel")) {
-                tabInfo = tabInfo + "<img src='img/vpn.png' title='Mesh-VPN konfiguriert'/>";
-            }
-        }
-    }
-    tabInfo = tabInfo + "</td>";
-    tabInfo = tabInfo + "<td>";
-    if (nodedata.nodeinfo.network.hasOwnProperty("mesh")) {
-        if (nodedata.nodeinfo.network.mesh.hasOwnProperty("bat0")) {
-            if (nodedata.nodeinfo.network.mesh.bat0.interfaces.hasOwnProperty("wireless") || nodedata.nodeinfo.network.mesh.bat0.interfaces.hasOwnProperty("other")) {
-                tabInfo = tabInfo + "<img src='img/mesh.png' title='Mesh-WLAN/LAN/WAN konfiguriert'/>";
-            }
-        }
-    }
-    tabInfo = tabInfo + "</td>";
     tabInfo = tabInfo + "<td>";
     tabInfo = tabInfo + "<a href='" + strMeshLink + "' target='_blank'><img src='img/map.png' title='Router im Meshviewer anzeigen' /></a>";
     tabInfo = tabInfo + "</td>";
@@ -291,8 +248,11 @@ function populateRow(id, nodedata) {
     //Uptime
     $(".td-uptime", row).append(strUptime);
     
-    //Technik
-    $(".td-technik", row).append(strTechnik);
+    //Router
+    $(".td-router", row).append(strRouter);
+    
+    //Firmware
+    $(".td-firmware", row).append(strFirmware);
     
     //Kontakt 
     $(".td-kontakt", row).append(strKontakt);
@@ -325,7 +285,12 @@ function getParameters () {
 }
 
 function formatUptime(uptime) {
-    var sec_num = parseInt(uptime, 10); 
+    
+    var dUpSince = Date.parse(uptime);
+    var dNow = Date.now();
+    var dUptime = (dNow - dUpSince) / 1000;
+    
+    var sec_num = parseInt(dUptime, 10); 
     var days    = Math.floor(sec_num / 3600 / 24);
     sec_num = sec_num - (days * 3600 * 24);
     var hours   = Math.floor(sec_num /3600);
