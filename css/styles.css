@@ -2,8 +2,7 @@
 
 body {
     font-family: 'Source Sans Pro', sans-serif;
-    font-size: 10pt;
-    font-weight: normal;
+    font-size: 11pt;
 }
 
 .logo {
@@ -21,6 +20,7 @@ h1 {
 	padding: 0;
 	height: 80px;
 	font-size: 22pt;
+	font-weight: 400;
 }
 
 .loader {
