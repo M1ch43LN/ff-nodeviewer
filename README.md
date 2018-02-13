@@ -47,7 +47,7 @@ Als Parameter stehen "hostname", ~~"contact"~~, "online" zur Verfügung, die kom
 
 ~~Zeigt alle Knoten an, deren Kontaktinfo "adresse@host.de" lautet.~~
 
-    ~~index.html?hostname=FF-WEE~~
+    index.html?hostname=FF-WEE
 
 Zeigt alle Knoten an, die "FF-WEE" im Hostnamen haben.
 
