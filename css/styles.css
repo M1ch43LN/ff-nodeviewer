@@ -82,6 +82,10 @@ h1 {
     vertical-align: middle;
 }
 
+#nodes tbody tr td.highload {
+	color: red;
+}
+
 #nodes tbody tr:last-child td {
 	border-bottom: 1px solid #A0A0A0;
 }

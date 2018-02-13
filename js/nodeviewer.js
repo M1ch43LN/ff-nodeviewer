@@ -26,7 +26,7 @@ function loadConfig() {
         $("body").append("<img src='" + gLogo + "' class='logo'/>");
     }
     
-    $("title").text("Nodeviewer");
+    $("title").text("Nodeviewer - " + gTitle);
     $("h1").text(gTitle);
     
     var url = "getjson.php?url=" + encodeURI(gNodedaten);
@@ -56,7 +56,7 @@ function loadNodes(strNodesURL) {
 function showNodes(nodes) {
     
     var arrParms = getParameters();
-    var strFilterKontakt = false;
+    //var strFilterKontakt = false;
     var strFilterOnline = -1;
     var strFilterHostname = false;
     
@@ -67,9 +67,9 @@ function showNodes(nodes) {
     intTotal = 0;
     intClientsTotal = 0;
     
-    if (arrParms.hasOwnProperty("contact")) {
-        strFilterKontakt = arrParms["contact"].toLowerCase();
-    }
+    //if (arrParms.hasOwnProperty("contact")) {
+    //    strFilterKontakt = arrParms["contact"].toLowerCase();
+    //}
     
     if (arrParms.hasOwnProperty("online")) {
         strFilterOnline = arrParms["online"];
@@ -90,15 +90,15 @@ function showNodes(nodes) {
         }
         
         //Kontaktfilter
-        if (strFilterKontakt) {
-            if (nodedata.hasOwnProperty("owner")) {
-                if (strFilterKontakt != nodedata.owner.toLowerCase()) {
-                    bolShow = false;
-                }
-            } else {
-                bolShow = false;
-            }    
-        }
+        //if (strFilterKontakt) {
+        //    if (nodedata.hasOwnProperty("owner")) {
+        //        if (strFilterKontakt != nodedata.owner.toLowerCase()) {
+        //            bolShow = false;
+        //        }
+        //    } else {
+        //        bolShow = false;
+        //    }    
+        //}
         
         //Online-Filter
         if (strFilterOnline > -1) {
@@ -157,7 +157,7 @@ function initRow(id) {
         row = row + "<td class='td-uptime'></td>";
         row = row + "<td class='td-router'></td>";
         row = row + "<td class='td-firmware'></td>";
-        row = row + "<td class='td-kontakt'></td>";
+        row = row + "<td class='td-load'></td>";
         row = row + "</tr>";
         $("#nodes tbody:first").append(row);
     } else {
@@ -170,7 +170,8 @@ function populateRow(id, nodedata) {
     var strImg;
     var strRouter = "";
     var strFirmware = "";
-    var strKontakt = "";
+    //var strKontakt = "";
+    var strSystemlast = "";
     var strUptime = "";
     var strClients = "";
     var strNodeID = "";
@@ -186,8 +187,13 @@ function populateRow(id, nodedata) {
     }
     
     //Kontakt
-    if (nodedata.hasOwnProperty("owner")) {
-        strKontakt = nodedata.owner;
+    //if (nodedata.hasOwnProperty("owner")) {
+    //    strKontakt = nodedata.owner;
+    //} 
+    
+    //Systemlast
+    if (nodedata.hasOwnProperty("loadavg")) {
+        strSystemlast = nodedata.loadavg;
     } 
     
     //Uptime
@@ -254,8 +260,16 @@ function populateRow(id, nodedata) {
     //Firmware
     $(".td-firmware", row).append(strFirmware);
     
+    //Systemlast
+    $(".td-load", row).append(strSystemlast);
+    if (strSystemlast > 1) {
+        $(".td-load", row).addClass("highload");
+    } else {
+        $(".td-load", row).removeClass("highload");
+    }
+    
     //Kontakt 
-    $(".td-kontakt", row).append(strKontakt);
+    //$(".td-kontakt", row).append(strKontakt);
     
     return row;
 }

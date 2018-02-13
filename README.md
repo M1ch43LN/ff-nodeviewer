@@ -28,14 +28,14 @@ Einstellungen werden über die Datei "js/config.js" vorgenommen.
     //URL zur Logodatei
     var gLogo = "https://ffnw.de/wp-content/uploads/2016/04/logo-1.png";
     //Daten alle x Sekunden neu laden. Werte unter 60 werden ignoriert.
-    var gNeuLaden = 60;
+    var gNeuLaden = 300;
 
 ## Filter ##
 
 Die Ansicht des Viewers kann durch zusätzliche URL-Parameter gefiltert werden.
-Als Parameter stehen "hostname", "contact", "online" zur Verfügung, die kombiniert werden können ("UND"-Verknüpfung)
+Als Parameter stehen "hostname", ~~"contact"~~, "online" zur Verfügung, die kombiniert werden können ("UND"-Verknüpfung)
 
-"**hostname**" ermittelt alle Nodes, die den übergebenen Wert im Hostnamen enthalten. Es wird kein Wildcard-Zeichen benötigt.
+~~"**hostname**" ermittelt alle Nodes, die den übergebenen Wert im Hostnamen enthalten. Es wird kein Wildcard-Zeichen benötigt.~~
 
 "**contact**" ermittelt alle Nodes, deren Kontaktinfo dem übergebenen Wert entsprechen. Es wird kein Wildcard-Zeichen unterstützt.
 
@@ -45,9 +45,9 @@ Als Parameter stehen "hostname", "contact", "online" zur Verfügung, die kombini
 
     index.html?contact=adresse@host.de
 
-Zeigt alle Knoten an, deren Kontaktinfo "adresse@host.de" lautet.
+~~Zeigt alle Knoten an, deren Kontaktinfo "adresse@host.de" lautet.~~
 
-    index.html?hostname=FF-WEE
+    ~~index.html?hostname=FF-WEE~~
 
 Zeigt alle Knoten an, die "FF-WEE" im Hostnamen haben.
 
