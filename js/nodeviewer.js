@@ -56,7 +56,7 @@ function loadNodes(strNodesURL) {
 function showNodes(nodes) {
     
     var arrParms = getParameters();
-    //var strFilterKontakt = false;
+    var strFilterKontakt = false;
     var strFilterOnline = -1;
     var strFilterHostname = false;
     
@@ -67,9 +67,9 @@ function showNodes(nodes) {
     intTotal = 0;
     intClientsTotal = 0;
     
-    //if (arrParms.hasOwnProperty("contact")) {
-    //    strFilterKontakt = arrParms["contact"].toLowerCase();
-    //}
+    if (arrParms.hasOwnProperty("contact")) {
+        strFilterKontakt = arrParms["contact"].toLowerCase();
+    }
     
     if (arrParms.hasOwnProperty("online")) {
         strFilterOnline = arrParms["online"];
@@ -90,15 +90,15 @@ function showNodes(nodes) {
         }
         
         //Kontaktfilter
-        //if (strFilterKontakt) {
-        //    if (nodedata.hasOwnProperty("owner")) {
-        //        if (strFilterKontakt != nodedata.owner.toLowerCase()) {
-        //            bolShow = false;
-        //        }
-        //    } else {
-        //        bolShow = false;
-        //    }    
-        //}
+        if (strFilterKontakt) {
+            if (nodedata.hasOwnProperty("owner")) {
+                if (strFilterKontakt != nodedata.owner.toLowerCase()) {
+                    bolShow = false;
+                }
+            } else {
+                bolShow = false;
+            }    
+        }
         
         //Online-Filter
         if (strFilterOnline > -1) {
@@ -156,6 +156,7 @@ function initRow(id) {
         row = row + "<td class='td-clients'></td>";
         row = row + "<td class='td-uptime'></td>";
         row = row + "<td class='td-router'></td>";
+        row = row + "<td class='td-owner'></td>";
         row = row + "<td class='td-firmware'></td>";
         row = row + "<td class='td-load'></td>";
         row = row + "</tr>";
@@ -170,7 +171,7 @@ function populateRow(id, nodedata) {
     var strImg;
     var strRouter = "";
     var strFirmware = "";
-    //var strKontakt = "";
+    var strKontakt = "";
     var strSystemlast = "";
     var strUptime = "";
     var strClients = "";
@@ -187,9 +188,9 @@ function populateRow(id, nodedata) {
     }
     
     //Kontakt
-    //if (nodedata.hasOwnProperty("owner")) {
-    //    strKontakt = nodedata.owner;
-    //} 
+    if (nodedata.hasOwnProperty("owner")) {
+        strKontakt = nodedata.owner;
+    } 
     
     //Systemlast
     if (nodedata.hasOwnProperty("loadavg")) {
@@ -269,7 +270,7 @@ function populateRow(id, nodedata) {
     }
     
     //Kontakt 
-    //$(".td-kontakt", row).append(strKontakt);
+    $(".td-owner", row).append(strKontakt);
     
     return row;
 }
