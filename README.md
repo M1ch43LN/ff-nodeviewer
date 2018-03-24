@@ -33,9 +33,9 @@ Einstellungen werden über die Datei "js/config.js" vorgenommen.
 ## Filter ##
 
 Die Ansicht des Viewers kann durch zusätzliche URL-Parameter gefiltert werden.
-Als Parameter stehen "hostname", ~~"contact"~~, "online" zur Verfügung, die kombiniert werden können ("UND"-Verknüpfung)
+Als Parameter stehen "hostname", "contact", "online" zur Verfügung, die kombiniert werden können ("UND"-Verknüpfung)
 
-~~"**hostname**" ermittelt alle Nodes, die den übergebenen Wert im Hostnamen enthalten. Es wird kein Wildcard-Zeichen benötigt.~~
+"**hostname**" ermittelt alle Nodes, die den übergebenen Wert im Hostnamen enthalten. Es wird kein Wildcard-Zeichen benötigt.
 
 "**contact**" ermittelt alle Nodes, deren Kontaktinfo dem übergebenen Wert entsprechen. Es wird kein Wildcard-Zeichen unterstützt.
 
@@ -45,7 +45,7 @@ Als Parameter stehen "hostname", ~~"contact"~~, "online" zur Verfügung, die kom
 
     index.html?contact=adresse@host.de
 
-~~Zeigt alle Knoten an, deren Kontaktinfo "adresse@host.de" lautet.~~
+Zeigt alle Knoten an, deren Kontaktinfo "adresse@host.de" lautet.
 
     index.html?hostname=FF-WEE
 
